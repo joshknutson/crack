@@ -1,0 +1,233 @@
+body	{
+	font-family: Arial, sans-serif;
+	font-size: 10pt;
+	color: #000;
+	background-color:#ccccca;
+}
+
+form	{
+	font-family: Arial, sans-serif;
+	font-size: 10pt;
+	color: #666;
+}
+
+.topbody {
+	background-color: #c0c0c0;
+}
+
+.apptitle {
+	font-family: Arial;
+	font-weight: bold;
+}
+
+.dsselector {
+	font-family: Arial;
+	font-size: 12px;
+}
+
+.dsselector a {
+	color: black;
+}
+
+body { 
+	font-family: Arial;
+}
+fieldset {  
+	margin: 0 0 0 0;  
+	padding: 0;
+} 
+fieldset ol {  
+	padding: 1em 1em 0 1em;  
+	list-style: none; 
+} 
+fieldset li {
+	list-style: none;
+}
+
+fieldset li.sub {
+	padding: 0 0 0 2.5em;
+}
+
+fieldset li.btn {
+	float:right;
+}
+
+legend {
+	font-weight:bold;
+}
+
+a	{
+	color: #0077dd;
+	text-decoration: none;
+	margin: 1em 0 0 0;
+}
+
+a:hover	{
+	text-decoration: none;
+}
+
+/* Outer - general settings for the entire page */
+
+#container	{
+	padding: 0em;
+	margin: 0em;
+	width: 100%;
+	background-color: #ccccca;
+}
+
+/* Header area */
+
+#header	{
+	position: relative;
+	background: #CCCCCA url('images/topGraphic.gif') repeat-x;
+	height: 110px;
+}
+
+#logo {
+	position: relative;
+	z-index:1;
+	background-position: right;
+	margin-right:4em;
+	height: 110px;
+}
+
+#logo h4 {
+	position: relative;
+	margin: 90px 4.5em 0 0;
+	z-index: 2;		
+}
+
+#cfWindowHeader	{
+	position: relative;
+	/*background: #CCCCCA url('images/smTopGraphic.gif') repeat-x;
+	height: 55px;*/
+}
+
+#cfWindowLogo {
+	position: relative;
+	/*background-image: url('images/smCodeGeneratorTab.jpg');
+	background-repeat: no-repeat;
+	z-index:1;
+	background-position: right;
+	margin-right:2em;
+	height: 55px;*/
+}
+
+#credits {
+	position: relative;
+	float: right;
+	margin: 0 1.5em 0 0;
+	text-align: right;
+	z-index:2;
+}
+
+#credits a	{
+	color: #0077dd;
+	text-decoration: none;
+	margin: 1em 0 0 0;
+	font-size: 12px
+}
+
+#subheading {
+	position: relative;
+	float: left;
+	margin: 0 0 0 1.5em;
+	font-size: 24px;
+	font-weight: bolder;
+	color: #666;
+	z-index:2;
+}
+
+#subheading a	{
+	color: #0077dd;
+	text-decoration: none;
+	margin: 1em 0 0 0;
+	font-size: 12px
+}
+
+#subheading a:hover	{
+	text-decoration: none;
+}
+
+/* Content */
+
+#content	{
+	position: relative;
+	background-color: #ccccca;
+	border: solid thin #666;
+	width: 90%;
+	/*margin: 110px auto 1em auto;*/
+	padding: 1em 1em 1em 1em;
+}
+
+#cfWindowContent	{
+	position: relative;
+	background-color: #ccccca;
+	border: solid thin #666;
+	width: 90%;
+	margin: 1em auto 1em auto;
+	padding: 1em 1em 1em 1em;
+}
+
+#content ul	{
+	list-style: none;
+	margin: 1em;
+}
+
+#content li	{
+	color: #545454;
+	margin-bottom: 1em;
+}
+
+#content h2	{
+	font-size: 1.5em;
+}
+
+#content h3	{
+	font-size: 1.1em;
+}
+
+#content ul	{
+	margin-bottom: 1.5em;
+	padding-left: 1em;
+	list-style: square;
+}
+
+#content blockquote	{
+	margin-bottom: 1.5em;
+	padding: 0.75em 0.75em 0.75em 1.5em;
+	border-left: solid 0.75em #005082;
+	/*background: #FDFDFD url('../images/a7.gif') top left repeat-x;*/
+}
+
+#content blockquote p	{
+	margin-bottom: 0em;
+}
+
+#content blockquote p.quote	{
+	font-style: italic;
+}
+
+#content blockquote p.attrib	{
+	font-weight: bold;
+}
+
+/* class to style cflayout tabs */
+.ytab {
+	padding:10px;
+}
+
+/* Footer */
+
+#footer	{
+	position: relative;
+	/*background: #000000 url('images/bottomGraphic.gif') repeat-x;
+	height: 50px;*/
+	width: 100%;
+	bottom: 0px;
+	left: 0px;
+}
+
+.clear	{
+	clear: both;
+}
