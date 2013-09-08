@@ -170,19 +170,6 @@
 					<cffile action="write" file="#rootPath##slash##datasource##slash#app#slash#helpers#slash#hlp_navigation.cfc" output="#generateHelperNavigation#" nameconflict="overwrite">
 				</cfif>
 
-
-				<cfif FileExists( ExpandPath( "..#slash##datasource##slash#app#slash#beans#slash#bean_#table#.cfc" ) ) AND ifExists EQ "skip">
-					<cfoutput>#slash##datasource##slash#app#slash#beans#slash#bean_#table#.cfc already existed and was skipped.<br /></cfoutput>
-				<cfelse>
-					<cfif NOT FileExists( ExpandPath( "..#slash##datasource##slash#app#slash#beans#slash#bean_#table#.cfc" ) )>
-				    	<cfoutput>#slash##datasource##slash#app#slash#beans#slash#bean_#table#.cfc has been created.<br /></cfoutput>
-					<cfelse>
-						<cfoutput>#slash##datasource##slash#app#slash#beans#slash#bean_#table#.cfc existed and was overwritten.<br /></cfoutput>
-					</cfif>
-					<cfset generateBean =  replaceList(generateBean,"<%,%,$@'","<,##,%") />
-					<cffile action="write" file="#rootPath##slash##datasource##slash#app#slash#beans#slash#bean_#table#.cfc" output="#generateBean#" nameconflict="overwrite">
-				</cfif>
-
 				<cfif FileExists( ExpandPath( "..#slash##datasource##slash#app#slash#dataobjects#slash##table#dao.cfc" ) ) AND ifExists EQ "skip">
 					<cfoutput>#slash##datasource##slash#app#slash#dataobjects#slash##table#dao.cfc already existed and was skipped.<br /></cfoutput>
 				<cfelse>

@@ -55,7 +55,9 @@
 				                   <th>Column Name</td>
 				                   <th>Data Type</td>
 				                   <th>Column Size</td>
+				                   <th>decimal digits</td>
 				                   <th>Is Nullable</td>
+				                   <th>default</td>
 				               </tr>
 		              		</thead>
 			               <tbody>
@@ -64,7 +66,9 @@
 					                   <td>#column_name#</td>
 					                   <td>#type_name#</td>
 					                   <td>#column_size#</td>
+					                   <td>#DECIMAL_DIGITS#</td>
 					                   <td>#is_nullable#</td>
+					                   <td>#COLUMN_DEFAULT_VALUE#</td>
 					               </tr>
 						           </cfoutput>
 					        </tbody>

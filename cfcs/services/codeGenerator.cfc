@@ -539,97 +539,6 @@
 <cfreturn generatedGateway>
 </cffunction>
 
-<!--- Controller Generator --->
-
-<cffunction name="generateController" access="public" returntype="string" hint="Generates code for the controller component">
-<cfsavecontent variable="generatedController"><cfoutput><cfprocessingdirective suppresswhitespace="true">
-<%cfcomponent name="#variables.table#Controller" displayname="#variables.table# Controller" output="false" hint="#variables.table# Controller created by ColdFusion generator">
-<%cffunction name="OnMissingMethod">
-<%cfoutput>You are trying to call the method "%arguments.missingMethodName%" with parameters:
-%arguments.missingmethodarguments.1% and %arguments.missingmethodarguments.2%
-<br> This method does not exist.<br><br>
-This is from the onMissingMethod.<%/cfoutput>
-<%/cffunction>
-
-<%cffunction name="interact">
-<cfloop query="tableColumns">
-<%cfparam name="form.<cfoutput>#variables.tableColumns.column_name#</cfoutput>" <cfif #type_name# EQ "bit" OR #type_name# EQ "boolean">default=0<cfelse>default=""</cfif>></cfloop>
-<%cfparam name="form.action" default="">
-<%cfparam name="form.start" default="">
-<%cfparam name="form.page" default="">
-<%cfparam name="form.pagesize" default="">
-<%cfparam name="form.sort" default="">
-<%cfparam name="form.dir" default="">
-
-<cfloop query="tableColumns">
-<cfif #type_name# EQ "date" OR #type_name# EQ "datetime" OR #type_name# EQ "timestamp" OR #type_name# EQ "smalldatetime">
-<%cfif form.<cfoutput>#variables.tableColumns.column_name#</cfoutput> EQ "">
-	<%cfset form.<cfoutput>#variables.tableColumns.column_name#</cfoutput> = "1899-12-31 00:00:00">
-<%cfelse>
-	<%cfset form.<cfoutput>#variables.tableColumns.column_name#</cfoutput> = %createODBCdatetime(<cfoutput>#variables.tableColumns.column_name#</cfoutput>)%>
-<%/cfif>
-</cfif>
-</cfloop>
-
-		<%cfscript>
-			// initialize variables
-			results = StructNew();
-			errors = StructNew();
-			processingError = false;
-			processingMessage = "";
-
-			// get instance of DAO
-			<cfoutput>#variables.table#</cfoutput>DAO = CreateObject("component", "#datasource#.app.dataobjects.<cfoutput>#variables.table#</cfoutput>dao").init(<cfif variables.pathType EQ "useAppPath">Application.datasource<cfelse>'<cfoutput>#variables.datasource#</cfoutput>'</cfif>);
-
-			// initialize object with form data
-			<cfoutput>#variables.table#</cfoutput> = CreateObject("component", "#datasource#.app.beans.bean_<cfoutput>#variables.table#</cfoutput>").init(<cfloop query="tableColumns"><cfif tableColumns.recordcount NEQ tableColumns.currentrow>form.<cfoutput>#column_name#</cfoutput>,<cfelse>form.<cfoutput>#column_name#</cfoutput></cfif></cfloop>);
-
-			// if no errors, take action based on value of action
-			if (StructIsEmpty(errors)) {
-				switch(form.action) {
-					case "Add":
-						// call create method of DAO
-						results = <cfoutput>#variables.table#</cfoutput>DAO.createRecord(<cfoutput>#variables.table#</cfoutput>);
-						break;
-
-					case "Update":
-						// call update method of DAO
-						results = <cfoutput>#variables.table#</cfoutput>DAO.updateRecord(<cfoutput>#variables.table#</cfoutput>);
-						break;
-
-					case "Delete":
-						// call delete method of DAO
-						results = <cfoutput>#variables.table#</cfoutput>DAO.deleteRecord(<cfoutput>#variables.table#</cfoutput>);
-						break;
-				}
-			}
-
-			// if there's a status returned, put it in the request scope
-			if (StructKeyExists(results, "success")) {
-				success = results.success;
-			}
-
-			// if there's a message, put it in the request scope
-			if (StructKeyExists(results, "message")) {
-				message = results.message;
-			}
-
-			// if this wasn't a delete, put the task in the request scope
-			if (form.action NEQ "Delete") {
-				request.<cfoutput>#variables.table#</cfoutput> = <cfoutput>#variables.table#</cfoutput>;
-			}
-		<%/cfscript>
-
-<%cflocation addtoken="false" url="../views/<cfoutput>#variables.table#</cfoutput>/default.cfm?success=%success%&message=%message%&<cfif variables.cf8 EQ false>form.start=%start%<cfelse>form.page=%page%&form.pagesize=%pagesize%&form.sort=%sort%&form.dir=%dir%</cfif>">
-<%/cffunction>
-
-
-<%/cfcomponent>
-</cfprocessingdirective></cfoutput></cfsavecontent>
-
-<cfreturn generatedController>
-</cffunction>
-
 <!--- Model Controller Generator --->
 <cffunction name="generateModelController" access="public" returntype="string" hint="Generates code for the controller component">
 	<cfset variables.easyTableName = variables.table />
@@ -1030,38 +939,38 @@ This is from the onMissingMethod.<%/cfoutput>
 
 <%cfoutput>
 <%h2>%url.action% <cfoutput>#variables.table#</cfoutput> Details<%/h2>
-	<%cfform action="%application.dirpath%#variables.datasource#/app/controllers/cnt_<cfoutput>#variables.table#</cfoutput>.cfc" method="post" name="<cfoutput>#variables.table#</cfoutput>" id="<cfoutput>#variables.table#</cfoutput>" role="form">
+	<%form action="%application.dirpath%#variables.datasource#/app/controllers/cnt_<cfoutput>#variables.table#</cfoutput>.cfc" method="post" name="<cfoutput>#variables.table#</cfoutput>" id="<cfoutput>#variables.table#</cfoutput>" role="form">
 		<%fieldset>
 			<cfloop query="tableColumns">
-			<cfif is_PrimaryKey EQ "no" and is_ForeignKey eq "no">
+			<cfif is_PrimaryKey EQ "no" and is_ForeignKey eq "no" and column_default_value eq "">
 			<%div class="form-group">
 				<%label for="<cfoutput>#variables.table#_#column_name#</cfoutput>"<cfif is_nullable eq "no"> class="required"</cfif>><cfoutput>#column_name#</cfoutput><%/label>
 				<!--- Loop through columns and create form fields based off column type --->
 				<!--- BIT and BOOLEAN datatypes --->
 				<cfif #type_name# EQ "bit" OR #type_name# EQ "boolean" >
 				<%cfif %<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>% EQ 1>
-					<%cfinput type="checkbox" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" value="1" checked="checked" class="form-control"  />
+					<%input type="checkbox" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" value="1" checked="checked" class="form-control"  />
 				<%cfelse>
-					<%cfinput type="checkbox" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" value="1" class="form-control" />
+					<%input type="checkbox" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" value="1" class="form-control" />
 				<%/cfif>
 				<!--- TEXT datatype --->
 				<cfelseif #type_name# EQ "text" or (#type_name# eq "varchar" and column_size gte 1000)>
-				<%cftextarea name="<cfoutput>#variables.table#_#column_name#</cfoutput>" class="form-control" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" maxlength="<cfoutput>#column_size#</cfoutput>" <cfif is_nullable eq "no">required="yes" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> <cfif variables.useRTE EQ true>richtext="true" toolbar="Default"</cfif>>%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%<%/cftextarea>
+				<%textarea name="<cfoutput>#variables.table#_#column_name#</cfoutput>" class="form-control" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" maxlength="<cfoutput>#column_size#</cfoutput>" <cfif is_nullable eq "no">required="yes" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> <cfif variables.useRTE EQ true>richtext="true" toolbar="Default"</cfif>>%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%<%/textarea>
 				<!--- DATE, DATETIME, SMALLDATETIME and TIMESTAMP datatypes --->
 				<cfelseif #type_name# EQ "date" OR #type_name# EQ "datetime" OR #type_name# EQ "timestamp" OR #type_name# EQ "smalldatetime" >
 				<%cfif isDate(<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>)>
-					<%cfinput type="datefield" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> validate="date" maxlength="<cfoutput>#column_size#</cfoutput>" value="%dateformat(<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>, 'm/d/yyyy')%" />
+					<%input type="datefield" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> validate="date" maxlength="<cfoutput>#column_size#</cfoutput>" value="%dateformat(<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>, 'm/d/yyyy')%" />
 				<%cfelse>
-					<%cfinput type="datefield" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> validate="date" maxlength="<cfoutput>#column_size#</cfoutput>" value="" />
+					<%input type="datefield" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> validate="date" maxlength="<cfoutput>#column_size#</cfoutput>" value="" />
 				<%/cfif>
 				<!--- Column Name is PASSWORD --->
 				<cfelseif #column_name# contains "password" >
-				<%cfinput type="password" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" />
+				<%input type="password" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" />
 				<%/td>
 			<%/div>
 			<%div class="form-group">
 				<%label for="<cfoutput>#column_name#</cfoutput>"><cfoutput>confirm #column_name#</cfoutput><%/label>
-					<%cfinput type="password" name="confirmPassword" onblur="validatePassword()" onkeypress="return true; validateField(this, 'confirmPasswordError')" maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" />
+					<%input type="password" name="confirmPassword" onblur="validatePassword()" onkeypress="return true; validateField(this, 'confirmPasswordError')" maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" />
 					<!--- Any other datatypes --->
 					<cfelseif #type_name# eq "decimal">
 					<%input type="number" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="numeric" message="Enter correct float number" />
@@ -1072,15 +981,15 @@ This is from the onMissingMethod.<%/cfoutput>
 					<cfelseif #column_name# contains "phone">
 					<%input type="tel" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="telephone" message="Enter correctly formatted telephone number" />
 					<cfelseif #column_name# contains "zip" or #column_name# contains "postal">
-					<%cfinput type="text" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="zipcode" message="Enter correct zip code" />
+					<%input type="text" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="zipcode" message="Enter correct zip code" />
 					<cfelseif #column_name# contains "creditcard">
-					<%cfinput type="text" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="creditcard" message="Enter correct credit card" />
+					<%input type="text" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="creditcard" message="Enter correct credit card" />
 					<cfelseif #column_name# contains "email">
 					<%input type="email" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="email" message="Enter correct email address" />
 					<cfelseif #column_name# contains "url">
 					<%input type="url" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" validate="url" message="Enter correct url" />
 					<cfelse>
-					<%cfinput type="text" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" />
+					<%input type="text" class="form-control" name="<cfoutput>#variables.table#_#column_name#</cfoutput>" id="<cfoutput>#variables.table#_#column_name#</cfoutput>" <cfif is_nullable eq "no">required="true" message="<cfoutput>#column_name#</cfoutput> is required"</cfif> maxlength="<cfoutput>#column_size#</cfoutput>" value="%<cfoutput>#variables.table#</cfoutput>.<cfoutput>#column_name#</cfoutput>%" />
 					</cfif>
 			<%/div>
 			</cfif>
@@ -1099,7 +1008,7 @@ This is from the onMissingMethod.<%/cfoutput>
 				<%/cfcase>
 			<%/cfswitch>
 		<%/div>
-<%/cfform>
+<%/form>
 <%/cfoutput>
 <%/cf_layout>
 
